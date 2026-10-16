@@ -136,7 +136,7 @@ def score_and_filter(
     scored: list[ScoredChunk] = []
     total_latency = 0.0
 
-    workers = int(os.environ.get("DECIDER_WORKERS", "8"))
+    workers = int(os.environ.get("DECIDER_WORKERS", "4"))
 
     def _score(chunk: SpecChunk) -> ScoredChunk:
         with requests.Session() as s:
