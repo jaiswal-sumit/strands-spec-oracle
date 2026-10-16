@@ -202,19 +202,14 @@ def interactive_loop(agent: Agent, spec_dir: Path) -> None:
         console.print()
         t0 = time.perf_counter()
         try:
-            response = agent(question, callback_handler=None)
+            console.print("[bold green]Answer:[/bold green]")
+            response = agent(question)
         except Exception as exc:
             console.print(f"[bold red]Error:[/bold red] {exc}")
             continue
 
         elapsed = time.perf_counter() - t0
-        console.print(
-            Panel(
-                str(response),
-                title=f"[bold green]Answer[/bold green] [dim]({elapsed:.1f}s)[/dim]",
-                border_style="green",
-            )
-        )
+        console.print(f"[dim]({elapsed:.1f}s total · Decider 2B + Bedrock)[/dim]")
 
 
 def main() -> None:
@@ -257,8 +252,8 @@ def main() -> None:
         chunks = load_spec_directory(spec_dir)
         result = score_and_filter(args.question, chunks)
         print_filter_result(result)
-        response = agent(args.question, callback_handler=None)
-        console.print(Panel(str(response), title="[bold green]Answer[/bold green]", border_style="green"))
+        console.print("[bold green]Answer:[/bold green]")
+        agent(args.question)
     else:
         interactive_loop(agent, spec_dir)
 
