@@ -23,7 +23,7 @@ from strands.interventions import Guide, Proceed
 
 from .chunker import load_spec_directory
 from .decider_client import FilterResult, score_and_filter
-from .agent import print_filter_result
+from .display import print_filter_result
 
 
 class SpecContextInterventionHandler(InterventionHandler):
