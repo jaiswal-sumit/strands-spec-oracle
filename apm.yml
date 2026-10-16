@@ -1,0 +1,46 @@
+# Agent Package Manager (APM) manifest
+# https://microsoft.github.io/apm/
+
+name: strands-spec-oracle
+version: 0.1.0
+description: >
+  SDD Spec Oracle — query your Spec-Driven Development markdown specs using
+  Strands Decider 2B for context scoring and Amazon Bedrock for generation.
+  Installs a CLAUDE.md agent context file and a reusable Decider 2B decision
+  pattern into your project.
+
+license: Apache-2.0
+repository: https://github.com/YOUR_USERNAME/strands-spec-oracle
+
+runtimes:
+  - claude-code
+  - github-copilot
+  - cursor
+  - windsurf
+
+targets:
+  # Deploys CLAUDE.md to .claude/ so Claude Code picks it up automatically
+  claude-code:
+    context_file: .claude/CLAUDE.md
+
+  # Deploys AGENTS.md for GitHub Copilot / other runtimes
+  github-copilot:
+    context_file: AGENTS.md
+
+dependencies:
+  # The reusable Decider 2B decision pattern — anyone can install this
+  - name: spec-relevance-scoring
+    source: decisions/spec_relevance_scoring.md
+    type: decision-pattern
+
+setup:
+  pre_install:
+    - description: "Ensure Python 3.10+ is available"
+      check: "python3 --version"
+  post_install:
+    - description: "Install Python dependencies"
+      run: "pip install -r requirements.txt"
+    - description: "Copy .env.example to .env if not present"
+      run: "cp -n .env.example .env || true"
+    - description: "Start Decider 2B server (run in a separate terminal)"
+      info: "strands-decider serve StrandsAgents/strands-decider-2B-hobson-v19 --port 8000"

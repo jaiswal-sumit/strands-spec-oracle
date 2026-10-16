@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "strands-spec-oracle"
+version = "0.1.0"
+description = "SDD Spec Oracle — Strands Decider 2B powered spec querying agent for Spec-Driven Development"
+requires-python = ">=3.10"
+license = { text = "Apache-2.0" }
+dependencies = [
+    "strands-agents>=0.1.0",
+    "strands-decider>=0.1.0",
+    "boto3>=1.35.0",
+    "rich>=13.7.0",
+    "requests>=2.32.0",
+    "pyyaml>=6.0",
+]
+
+[project.scripts]
+spec-oracle = "spec_oracle.agent:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["spec_oracle*"]
