@@ -18,10 +18,10 @@ from __future__ import annotations
 
 import os
 import time
-from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 
 import requests
+from rich.progress import Progress, SpinnerColumn, BarColumn, TextColumn, TimeElapsedColumn
 
 from .chunker import SpecChunk
 
@@ -136,18 +136,23 @@ def score_and_filter(
     scored: list[ScoredChunk] = []
     total_latency = 0.0
 
-    workers = int(os.environ.get("DECIDER_WORKERS", "4"))
-
-    def _score(chunk: SpecChunk) -> ScoredChunk:
-        with requests.Session() as s:
-            return _score_chunk(question, chunk, s)
-
-    with ThreadPoolExecutor(max_workers=workers) as pool:
-        futures = {pool.submit(_score, chunk): chunk for chunk in chunks}
-        for future in as_completed(futures):
-            sc = future.result()
-            scored.append(sc)
-            total_latency += sc.latency_ms
+    with requests.Session() as session:
+        with Progress(
+            SpinnerColumn(),
+            TextColumn("[cyan]Decider 2B scoring[/cyan]"),
+            BarColumn(),
+            TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
+            TextColumn("·"),
+            TextColumn("{task.completed}/{task.total} chunks"),
+            TimeElapsedColumn(),
+            transient=True,
+        ) as progress:
+            task = progress.add_task("scoring", total=len(chunks))
+            for chunk in chunks:
+                sc = _score_chunk(question, chunk, session)
+                scored.append(sc)
+                total_latency += sc.latency_ms
+                progress.advance(task)
 
     # Sort by relevance descending
     scored.sort(key=lambda s: s.relevance, reverse=True)
