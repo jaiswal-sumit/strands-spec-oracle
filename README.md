@@ -2,7 +2,7 @@
 
 **SDD spec querying with Decider 2B context scoring + Amazon Bedrock**
 
-> Hackathon submission for the [Strands Decider 2B Hackathon](https://community.aws/content/hackathon)
+> Hackathon submission for the [Strands Decider 2B Hackathon](https://builder.aws.com/build/hackathons/4f50957c-1d08-37ab-b11c-97516b9adeb4/agent-experience-hackathon-strands-decider)
 > Decision pattern: **Context & Memory** (`#context-memory`)
 
 ---
