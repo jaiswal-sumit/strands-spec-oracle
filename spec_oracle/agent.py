@@ -107,40 +107,24 @@ def query_specs(question: str) -> str:
 
 # ── CLI entry point ───────────────────────────────────────────────────────────
 
-def build_agent(spec_dir: Path, tool_mode: bool = False) -> Agent:
-    """Construct and return the Spec Oracle Strands agent.
-
-    Args:
-        tool_mode: If True, expose query_specs as an explicit tool the model
-                   calls visibly (great for demos). If False (default), the
-                   InterventionHandler transparently scores and injects context.
-    """
+def build_agent(spec_dir: Path) -> Agent:
+    """Construct and return the Spec Oracle Strands agent."""
     global _spec_dir
     _spec_dir = spec_dir
 
     model = BedrockModel(model_id=BEDROCK_MODEL_ID)
 
-    if tool_mode:
-        # Demo mode: model explicitly calls query_specs — scoring table visible
-        agent = Agent(
-            model=model,
-            system_prompt=SYSTEM_PROMPT,
-            tools=[query_specs],
-            interventions=[],
-        )
-    else:
-        # Default: InterventionHandler scores + injects context transparently
-        handler = SpecContextInterventionHandler(spec_dir=spec_dir)
-        agent = Agent(
-            model=model,
-            system_prompt=SYSTEM_PROMPT,
-            tools=[],
-            interventions=[handler],
-        )
+    handler = SpecContextInterventionHandler(spec_dir=spec_dir)
+    agent = Agent(
+        model=model,
+        system_prompt=SYSTEM_PROMPT,
+        tools=[],
+        interventions=[handler],
+    )
     return agent
 
 
-def interactive_loop(agent: Agent, spec_dir: Path, tool_mode: bool = False) -> None:
+def interactive_loop(agent: Agent, spec_dir: Path) -> None:
     """Run the interactive Q&A loop."""
     chunks = load_spec_directory(spec_dir)
     tok = total_tokens(chunks)
@@ -152,7 +136,6 @@ def interactive_loop(agent: Agent, spec_dir: Path, tool_mode: bool = False) -> N
             f"[dim]Spec files:[/dim] {len(set(c.file for c in chunks))} files · "
             f"{len(chunks)} chunks · ~{tok:,} tokens total\n"
             f"[dim]Bedrock model:[/dim] {BEDROCK_MODEL_ID}\n\n"
-            f"Mode: [bold]{'tool (explicit query_specs)' if tool_mode else 'handler (transparent injection)'}[/bold]\n\n"
             f"Type your question and press Enter. Type [bold]exit[/bold] to quit.",
             border_style="cyan",
         )
@@ -194,15 +177,6 @@ def main() -> None:
         help="Path to directory containing .md spec files (default: ./demo/specs)",
     )
     parser.add_argument(
-        "--tool-mode",
-        action="store_true",
-        default=False,
-        help=(
-            "Demo mode: expose query_specs as an explicit tool so the model calls it visibly. "
-            "Default: InterventionHandler injects context transparently."
-        ),
-    )
-    parser.add_argument(
         "--question", "-q",
         type=str,
         default=None,
@@ -225,7 +199,7 @@ def main() -> None:
             "Continuing in degraded mode (no context scoring)."
         )
 
-    agent = build_agent(spec_dir, tool_mode=args.tool_mode)
+    agent = build_agent(spec_dir)
 
     if args.question:
         # Single-shot mode
@@ -235,7 +209,7 @@ def main() -> None:
         console.print("[bold green]Answer:[/bold green]")
         agent(args.question)
     else:
-        interactive_loop(agent, spec_dir, tool_mode=args.tool_mode)
+        interactive_loop(agent, spec_dir)
 
 
 if __name__ == "__main__":

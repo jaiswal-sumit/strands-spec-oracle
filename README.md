@@ -69,12 +69,8 @@ strands-decider serve StrandsAgents/strands-decider-2B-hobson-v19 --port 8000
 ### Run the agent
 
 ```bash
-# Interactive mode — InterventionHandler injects context transparently
+# Interactive mode
 python -m spec_oracle.agent --specs ./demo/specs
-
-# Demo / video mode — model calls query_specs tool explicitly ("Tool #1: query_specs")
-# Scoring table appears for every question, tool call visible in output
-python -m spec_oracle.agent --specs ./demo/specs --tool-mode
 
 # Single question (non-interactive)
 python -m spec_oracle.agent --specs ./demo/specs \
@@ -83,13 +79,6 @@ python -m spec_oracle.agent --specs ./demo/specs \
 # Point at your own SDD spec directory
 python -m spec_oracle.agent --specs /path/to/your/specs
 ```
-
-**Two modes explained:**
-
-| Mode | Flag | How it works |
-|------|------|-------------|
-| Handler (default) | _(none)_ | `SpecContextInterventionHandler` scores chunks before every Bedrock call. Scoring table always shown. No explicit tool call. |
-| Tool mode | `--tool-mode` | `query_specs` exposed as a Strands tool. Model calls it visibly. Great for demos where you want to see the tool firing. |
 
 ### Using APM
 
@@ -153,6 +142,9 @@ Demo corpus: **28 spec files · 313 chunks · ~24,840 tokens total**
 
 Run `python benchmark.py --specs ./demo/specs` to reproduce these numbers.
 All figures below are real measured output from `benchmark.py`.
+
+> **Note:** The benchmark runs 10 queries × 313 chunks each. On CPU (Apple Silicon)
+> each query takes ~40s, so the full benchmark run takes **~6 minutes** to complete.
 
 | Query | Chunks used | Tokens used | Tokens saved | Saved % |
 |-------|------------|-------------|-------------|---------|
