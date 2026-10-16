@@ -202,7 +202,7 @@ def interactive_loop(agent: Agent, spec_dir: Path) -> None:
         console.print()
         t0 = time.perf_counter()
         try:
-            response = agent(question)
+            response = agent(question, callback_handler=None)
         except Exception as exc:
             console.print(f"[bold red]Error:[/bold red] {exc}")
             continue
@@ -257,7 +257,7 @@ def main() -> None:
         chunks = load_spec_directory(spec_dir)
         result = score_and_filter(args.question, chunks)
         print_filter_result(result)
-        response = agent(args.question)
+        response = agent(args.question, callback_handler=None)
         console.print(Panel(str(response), title="[bold green]Answer[/bold green]", border_style="green"))
     else:
         interactive_loop(agent, spec_dir)

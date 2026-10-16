@@ -91,7 +91,7 @@ def run_benchmark(spec_dir: Path, threshold: float, max_chunks: int) -> None:
     results_table.add_column("Tokens\nused", justify="right")
     results_table.add_column("Tokens\nsaved", justify="right")
     results_table.add_column("Saved\n%", justify="right")
-    results_table.add_column("Decider\nlatency", justify="right")
+    results_table.add_column("Decider total\n(all chunks)", justify="right")
 
     total_savings = 0
     total_used = 0
