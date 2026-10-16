@@ -164,7 +164,7 @@ def build_agent(spec_dir: Path) -> Agent:
     agent = Agent(
         model=model,
         system_prompt=SYSTEM_PROMPT,
-        tools=[query_specs],
+        tools=[],          # InterventionHandler injects context — no explicit tool needed
         interventions=[handler],
     )
     return agent

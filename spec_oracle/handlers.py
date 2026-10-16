@@ -23,6 +23,7 @@ from strands.interventions import Guide, Proceed
 
 from .chunker import load_spec_directory
 from .decider_client import FilterResult, score_and_filter
+from .agent import print_filter_result
 
 
 class SpecContextInterventionHandler(InterventionHandler):
@@ -73,6 +74,9 @@ class SpecContextInterventionHandler(InterventionHandler):
         # Score chunks with Decider 2B
         result = score_and_filter(question, self._chunks)
         self.last_filter_result = result
+
+        # Show the scoring table in the terminal
+        print_filter_result(result)
 
         if not result.selected_chunks:
             return Proceed()
