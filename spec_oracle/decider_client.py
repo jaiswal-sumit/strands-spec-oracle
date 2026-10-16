@@ -18,6 +18,7 @@ from __future__ import annotations
 
 import os
 import time
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from dataclasses import dataclass
 
 import requests
@@ -135,9 +136,16 @@ def score_and_filter(
     scored: list[ScoredChunk] = []
     total_latency = 0.0
 
-    with requests.Session() as session:
-        for chunk in chunks:
-            sc = _score_chunk(question, chunk, session)
+    workers = int(os.environ.get("DECIDER_WORKERS", "8"))
+
+    def _score(chunk: SpecChunk) -> ScoredChunk:
+        with requests.Session() as s:
+            return _score_chunk(question, chunk, s)
+
+    with ThreadPoolExecutor(max_workers=workers) as pool:
+        futures = {pool.submit(_score, chunk): chunk for chunk in chunks}
+        for future in as_completed(futures):
+            sc = future.result()
             scored.append(sc)
             total_latency += sc.latency_ms
 
