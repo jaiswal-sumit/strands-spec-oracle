@@ -166,6 +166,12 @@ Decider 2B latency: ~127ms/chunk · ~39s/query on CPU (Apple Silicon: ~50ms/chun
 
 ---
 
+## Demo Video
+
+[![Spec Oracle Demo](https://img.youtube.com/vi/225LgExniVs/0.jpg)](https://youtu.be/225LgExniVs)
+
+---
+
 ## License
 
 Apache 2.0 — see [LICENSE](LICENSE).
