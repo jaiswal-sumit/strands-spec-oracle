@@ -53,7 +53,7 @@ Developer: "What's the retry strategy for failed payments?"
 ### Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/strands-spec-oracle
+git clone https://github.com/jaiswal-sumit/strands-spec-oracle
 cd strands-spec-oracle
 pip install -r requirements.txt
 cp .env.example .env   # edit AWS region / model if needed
